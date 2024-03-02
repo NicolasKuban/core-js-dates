@@ -17,9 +17,12 @@
  * '01 Jan 1970 00:00:00 UTC' => 0
  * '04 Dec 1995 00:12:00 UTC' => 818035920000
  */
-function dateToTimestamp(/* date */) {
-  throw new Error('Not implemented');
+function dateToTimestamp(date) {
+  return Date.parse(date);
 }
+// a = '01 Jan 1970 00:00:00 UTC' // => 0
+// a = '04 Dec 1995 00:12:00 UTC' // => 818035920000
+// console.log(dateToTimestamp(a))
 
 /**
  * Returns the time in hh:mm:ss format from the received date.
@@ -31,9 +34,14 @@ function dateToTimestamp(/* date */) {
  * Date(2023, 5, 1, 8, 20, 55) => '08:20:55'
  * Date(2015, 10, 20, 23, 15, 1) => '23:15:01'
  */
-function getTime(/* date */) {
-  throw new Error('Not implemented');
+function getTime(date) {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
 }
+// console.log(getTime(new Date(2023, 5, 1, 8, 20, 55))) //  => '08:20:55'
+// console.log(getTime(new Date(2015, 10, 20, 23, 15, 1))) // => '23:15:01'
 
 /**
  * Returns the name of the day of the week for a given date string.
@@ -46,9 +54,21 @@ function getTime(/* date */) {
  * '03 Dec 1995 00:12:00 UTC' => 'Sunday'
  * '2024-01-30T00:00:00.000Z' => 'Tuesday'
  */
-function getDayName(/* date */) {
-  throw new Error('Not implemented');
+function getDayName(date) {
+  return [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ][new Date(date).getDay()];
 }
+
+// console.log(getDayName('01 Jan 1970 00:00:00 UTC')) // => 'Thursday'
+// console.log(getDayName('03 Dec 1995 00:12:00 UTC')) // => 'Sunday'
+// console.log(getDayName('2024-01-30T00:00:00.000Z')) // => 'Tuesday'
 
 /**
  * Returns the date of the next Friday from a given date.
@@ -61,9 +81,13 @@ function getDayName(/* date */) {
  * Date('2024-02-13T00:00:00Z') => Date('2024-02-16T00:00:00Z')
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
-function getNextFriday(/* date */) {
-  throw new Error('Not implemented');
+function getNextFriday(date) {
+  date.setDate(date.getDate() + ((5 + 7 - date.getDay()) % 7 || 7));
+  return date;
 }
+// console.log(getNextFriday(new Date('2024-02-03T00:00:00Z'))) //  => Date('2024-02-09T00:00:00Z') + 6
+// console.log(getNextFriday(new Date('2024-02-13T00:00:00Z'))) //  => Date('2024-02-16T00:00:00Z') + 3
+// console.log(getNextFriday(new Date('2024-02-16T00:00:00Z'))) //  => Date('2024-02-23T00:00:00Z') + 7
 
 /**
  * Returns the number of days in a specified month and year.
@@ -76,8 +100,9 @@ function getNextFriday(/* date */) {
  * 1, 2024 => 31
  * 2, 2024 => 29
  */
-function getCountDaysInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountDaysInMonth(month, year) {
+  const date = new Date(year, month, 0);
+  return date.getDate();
 }
 
 /**
@@ -91,9 +116,13 @@ function getCountDaysInMonth(/* month, year */) {
  * '2024-02-01T00:00:00.000Z', '2024-02-02T00:00:00.000Z'  => 2
  * '2024-02-01T00:00:00.000Z', '2024-02-12T00:00:00.000Z'  => 12
  */
-function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
-  throw new Error('Not implemented');
+function getCountDaysOnPeriod(dateStart, dateEnd) {
+  const start = new Date(dateStart);
+  const end = new Date(dateEnd);
+  return 1 + (end - start) / (24 * 60 * 60 * 1000);
 }
+// console.log(getCountDaysOnPeriod('2024-02-01T00:00:00.000Z', '2024-02-02T00:00:00.000Z')) //  => 2
+// console.log(getCountDaysOnPeriod('2024-02-01T00:00:00.000Z', '2024-02-12T00:00:00.000Z')) //  => 12
 
 /**
  * Returns true if a given date is within a specified range, including both the start and end dates.
@@ -112,9 +141,18 @@ function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
  * '2024-02-02', { start: '2024-02-02', end: '2024-03-02' } => true
  * '2024-02-10', { start: '2024-02-02', end: '2024-03-02' } => true
  */
-function isDateInPeriod(/* date, period */) {
-  throw new Error('Not implemented');
+function isDateInPeriod(date, period) {
+  function getDateISO(str) {
+    return new Date(Date.parse(str));
+  }
+  return (
+    getDateISO(date) >= getDateISO(period.start) &&
+    getDateISO(date) <= getDateISO(period.end)
+  );
 }
+// console.log(isDateInPeriod('2024-02-01', { start: '2024-02-02', end: '2024-03-02' })) // => false
+// console.log(isDateInPeriod('2024-02-02', { start: '2024-02-02', end: '2024-03-02' })) // => true
+// console.log(isDateInPeriod('2024-02-10', { start: '2024-02-02', end: '2024-03-02' })) // => true
 
 /**
  * Returns the date formatted in 'M/D/YYYY, hh:mm:ss a'.
@@ -127,9 +165,20 @@ function isDateInPeriod(/* date, period */) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const d = new Date(Date.parse(date));
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  const hours = d.getHours();
+  const minutes = d.getMinutes();
+  const seconds = d.getSeconds();
+  return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds} ${1}`;
+  // console.log(d)
 }
+console.log(formatDate('2024-02-01T15:00:00.000Z')) // => '2/1/2024, 3:00:00 PM'
+console.log(formatDate('1999-01-05T02:20:00.000Z')) // => '1/5/1999, 2:20:00 AM'
+console.log(formatDate('2010-12-15T22:59:00.000Z')) // => '12/15/2010, 10:59:00 PM'
 
 /**
  * Returns the total number of weekend days (Saturdays and Sundays) in a specified month and year.
