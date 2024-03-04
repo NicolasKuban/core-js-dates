@@ -167,18 +167,11 @@ function isDateInPeriod(date, period) {
  */
 function formatDate(date) {
   const d = new Date(Date.parse(date));
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const day = d.getDate();
-  const hours = d.getHours();
-  const minutes = d.getMinutes();
-  const seconds = d.getSeconds();
-  return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds} ${1}`;
-  // console.log(d)
+  return d.toLocaleString('en-US', { timeZone: 'UTC' });
 }
-console.log(formatDate('2024-02-01T15:00:00.000Z')) // => '2/1/2024, 3:00:00 PM'
-console.log(formatDate('1999-01-05T02:20:00.000Z')) // => '1/5/1999, 2:20:00 AM'
-console.log(formatDate('2010-12-15T22:59:00.000Z')) // => '12/15/2010, 10:59:00 PM'
+// console.log(formatDate('2024-02-01T15:00:00.000Z')) // => '2/1/2024, 3:00:00 PM'
+// console.log(formatDate('1999-01-05T02:20:00.000Z')) // => '1/5/1999, 2:20:00 AM'
+// console.log(formatDate('2010-12-15T22:59:00.000Z')) // => '12/15/2010, 10:59:00 PM'
 
 /**
  * Returns the total number of weekend days (Saturdays and Sundays) in a specified month and year.
@@ -192,9 +185,20 @@ console.log(formatDate('2010-12-15T22:59:00.000Z')) // => '12/15/2010, 10:59:00 
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const a = (new Date(year, month - 1).getDay() + 6) % 7;
+  const c = new Date(year, month, 0).getDate();
+  let result = 8;
+  result += (a > 2 && c > 30) || (a > 3 && c > 29) ? 1 : 0;
+  result += a === 4 && c === 31 ? 1 : 0;
+  result += a === 5 && c > 29 ? 1 : 0;
+  return result;
 }
+// console.log(getCountWeekendsInMonth(5, 2022)) // => 9
+// console.log(getCountWeekendsInMonth(12, 2023)) // => 10
+// console.log(getCountWeekendsInMonth(1, 2024)) // => 8
+// console.log(getCountWeekendsInMonth(7, 2023)) // => 10
+// console.log(getCountWeekendsInMonth(6, 2023)) // => 8
 
 /**
  * Returns the week number of the year for a given date.
@@ -208,9 +212,25 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const start = new Date(date.getFullYear(), 0, 1);
+  let result = 1 + Math.floor((date - start) / (7 * 24 * 60 * 60 * 1000));
+  result += start.getDay() > 4 ? 1 : 0;
+  return result;
 }
+
+// console.log(getWeekNumberByDate(new Date(2024, 0, 3))) // => 1
+// console.log(getWeekNumberByDate(new Date(2024, 0, 31))) // => 5
+// console.log(getWeekNumberByDate(new Date(2024, 1, 23))) // => 8
+// console.log(getWeekNumberByDate(new Date(2022, 2, 22))) //, 13
+// console.log(getWeekNumberByDate(new Date(2021, 3, 21))) //, 17);
+// console.log(getWeekNumberByDate(new Date(2020, 4, 20))) //, 21);
+// console.log(getWeekNumberByDate(new Date(2019, 5, 23))) //, 25);
+// console.log(getWeekNumberByDate(new Date(2018, 6, 22))) //, 29);
+// console.log(getWeekNumberByDate(new Date(2017, 7, 21))) //, 34);
+// console.log(getWeekNumberByDate(new Date(2016, 8, 20))) //, 39);
+// console.log(getWeekNumberByDate(new Date(2015, 9, 23))) //, 43);
+// console.log(getWeekNumberByDate(new Date(1950, 10, 22))) //, 47);
 
 /**
  * Returns the date of the next Friday the 13th from a given date.
@@ -223,9 +243,23 @@ function getWeekNumberByDate(/* date */) {
  * Date(2024, 0, 13) => Date(2024, 8, 13)
  * Date(2023, 1, 1) => Date(2023, 9, 13)
  */
-function getNextFridayThe13th(/* date */) {
-  throw new Error('Not implemented');
+function getNextFridayThe13th(date) {
+  let result =
+    date.getDate() < 13
+      ? new Date(date.getFullYear(), date.getMonth(), 13)
+      : date;
+  while (!(result.getDay() === 5 && result.getDate() === 13)) {
+    result = new Date(result.getFullYear(), result.getMonth() + 1, 13);
+  }
+  return result;
 }
+
+// console.log(getNextFridayThe13th(new Date(2024, 0, 13))) // => Date(2024, 8, 13)
+// console.log(getNextFridayThe13th(new Date(2023, 1, 1))) // => Date(2023, 9, 13)
+// console.log(getNextFridayThe13th(new Date(2024, 0, 1))) // new Date(2024, 8, 13)
+// console.log(getNextFridayThe13th(new Date(2023, 0, 1))) // new Date(2023, 0, 13)
+// console.log(getNextFridayThe13th(new Date(2022, 0, 1))) // new Date(2022, 4, 13)
+// console.log(getNextFridayThe13th(new Date(2021, 0, 1))) // new Date(2021, 7, 13)
 
 /**
  * Returns the quarter of the year for a given date.
@@ -238,9 +272,13 @@ function getNextFridayThe13th(/* date */) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  return Math.floor(date.getMonth() / 3) + 1;
 }
+
+// console.log(getQuarter(new Date(2024, 1, 13))) // => 1
+// console.log(getQuarter(new Date(2024, 5, 1))) // => 2
+// console.log(getQuarter(new Date(2024, 11, 10))) // => 4
 
 /**
  * Generates an employee's work schedule within a specified date range, based on a pattern of working and off days.
@@ -260,9 +298,40 @@ function getQuarter(/* date */) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  function getDate (str) {
+    const arr = str.split('-');
+    return new Date(arr[2], arr[1] - 1, arr[0]);
+  }
+  let current = getDate(period.start);
+  const end = getDate(period.end);
+  let workDay = countWorkDays;
+  let offDay = countOffDays;
+  const schedule = [];
+  while (end > current) {
+    if (workDay) {
+      workDay -= 1;
+      schedule.push(current);
+    } else {
+      offDay -= 1;
+    }
+    if (!workDay && !offDay) {
+      workDay = countWorkDays;
+      offDay = countOffDays;
+    }
+    current = new Date(
+      current.getFullYear(),
+      current.getMonth(),
+      current.getDate() + 1
+    );
+  }
+  console.log('===================')
+  return schedule;
 }
+console.log(getWorkSchedule({ start: '01-01-2024', end: '15-01-2024' }, 1, 3))
+//  => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
+console.log(getWorkSchedule({ start: '01-01-2024', end: '10-01-2024' }, 1, 1))
+//  => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
 
 /**
  * Determines whether the year in the provided date is a leap year.
