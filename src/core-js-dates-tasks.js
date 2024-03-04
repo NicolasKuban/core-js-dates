@@ -173,16 +173,29 @@ function isDateInPeriod(date, period) {
 //   const shift = new Date().getTimezoneOffset();
 //   return new Date(new Date(date).setMinutes(shift)).toLocaleString('en-US');
 // }
+// function formatDate(date) {
+//   const current = new Date(date);
+//   const m = current.getUTCMonth() + 1;
+//   const d = current.getUTCDate();
+//   const yyyy = current.getUTCFullYear();
+//   const hh = current.getUTCHours();
+//   const mm = String(current.getUTCMinutes()).padStart(2, '0');
+//   const ss = String(current.getUTCSeconds()).padStart(2, '0');
+//   const halfDay = hh > 11 ? 'PM' : 'AM';
+//   return `${m}/${d}/${yyyy}, ${hh % 13}:${mm}:${ss} ${halfDay}`;
+// }
 function formatDate(date) {
-  const current = new Date(date);
-  const m = current.getUTCMonth() + 1;
-  const d = current.getUTCDate();
-  const yyyy = current.getUTCFullYear();
-  const hh = current.getUTCHours();
-  const mm = String(current.getUTCMinutes()).padStart(2, '0');
-  const ss = String(current.getUTCSeconds()).padStart(2, '0');
-  const halfDay = hh > 11 ? 'PM' : 'AM';
-  return `${m}/${d}/${yyyy}, ${hh % 13}:${mm}:${ss} ${halfDay}`;
+  const options = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+    timeZone: 'UTC',
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(new Date(date));
 }
 // console.log(formatDate('2024-02-01T15:00:00.000Z')) // => '2/1/2024, 3:00:00 PM'
 // console.log(formatDate('1999-01-05T02:20:00.000Z')) // => '1/5/1999, 2:20:00 AM'
