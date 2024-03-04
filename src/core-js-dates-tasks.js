@@ -165,9 +165,24 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
+// function formatDate(date) {
+//   const d = new Date(Date.parse(date));
+//   return d.toLocaleString('en-US', { timeZone: 'UTC' });
+// }
+// function formatDate(date) {
+//   const shift = new Date().getTimezoneOffset();
+//   return new Date(new Date(date).setMinutes(shift)).toLocaleString('en-US');
+// }
 function formatDate(date) {
-  const d = new Date(Date.parse(date));
-  return d.toLocaleString('en-US', { timeZone: 'UTC' });
+  const current = new Date(date);
+  const m = current.getUTCMonth() + 1;
+  const d = current.getUTCDate();
+  const yyyy = current.getUTCFullYear();
+  let hh = current.getUTCHours();
+  const mm = String(current.getUTCMinutes()).padStart(2, '0');
+  const ss = String(current.getUTCSeconds()).padStart(2, '0');
+  const halfDay = hh > 11 ? 'PM' : 'AM';
+  return `${m}/${d}/${yyyy}, ${hh % 13}:${mm}:${ss} ${halfDay}`;
 }
 // console.log(formatDate('2024-02-01T15:00:00.000Z')) // => '2/1/2024, 3:00:00 PM'
 // console.log(formatDate('1999-01-05T02:20:00.000Z')) // => '1/5/1999, 2:20:00 AM'
