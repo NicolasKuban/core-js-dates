@@ -178,7 +178,7 @@ function formatDate(date) {
   const m = current.getUTCMonth() + 1;
   const d = current.getUTCDate();
   const yyyy = current.getUTCFullYear();
-  let hh = current.getUTCHours();
+  const hh = current.getUTCHours();
   const mm = String(current.getUTCMinutes()).padStart(2, '0');
   const ss = String(current.getUTCSeconds()).padStart(2, '0');
   const halfDay = hh > 11 ? 'PM' : 'AM';
