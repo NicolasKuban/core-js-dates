@@ -344,47 +344,50 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
-}
-// function getWorkSchedule(period, countWorkDays, countOffDays) {
-//   function getDate(str) {
-//     const arr = str.split('-');
-//     return new Date(arr[2], arr[1] - 1, arr[0]);
-//   }
-//   function getString(date) {
-//     return date.toLocaleDateString().replace(/\./g, '-');
-//   }
-//   let current = getDate(period.start);
-//   const end = getDate(period.end);
-//   let workDay = countWorkDays;
-//   let offDay = countOffDays;
-//   const schedule = [];
-//   while (end >= current) {
-//     if (workDay) {
-//       workDay -= 1;
-//       schedule.push(current);
-//     } else {
-//       offDay -= 1;
-//     }
-//     if (!workDay && !offDay) {
-//       workDay = countWorkDays;
-//       offDay = countOffDays;
-//     }
-//     current = new Date(
-//       current.getFullYear(),
-//       current.getMonth(),
-//       current.getDate() + 1
-//     );
-//   }
-//   return schedule.map((value) => getString(value));
+// function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
+//   throw new Error('Not implemented');
 // }
+// function getString(date) {
+//   return date.toLocaleDateString().replace(/\./g, '-');
+// }
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  function getDate(str) {
+    const arr = str.split('-');
+    return new Date(arr[2], arr[1] - 1, arr[0]);
+  }
+  function getString(str) {
+    return new Date(str).toLocaleDateString('es-CL');
+  }
+  let current = getDate(period.start);
+  const end = getDate(period.end);
+  let workDay = countWorkDays;
+  let offDay = countOffDays;
+  const schedule = [];
+  while (end >= current) {
+    if (workDay) {
+      workDay -= 1;
+      schedule.push(getString(current));
+    } else {
+      offDay -= 1;
+    }
+    if (!workDay && !offDay) {
+      workDay = countWorkDays;
+      offDay = countOffDays;
+    }
+    current = new Date(
+      current.getFullYear(),
+      current.getMonth(),
+      current.getDate() + 1
+    );
+  }
+  return schedule;
+}
 // console.log(getWorkSchedule({ start: '01-01-2024', end: '15-01-2024' }, 1, 3))
-// //  => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
+//  => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
 // console.log(getWorkSchedule({ start: '01-01-2024', end: '10-01-2024' }, 1, 1))
-// //  => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
-// console.log(getWorkSchedule({ start: '01-01-2024', end: '29-02-2024' }, 2, 2)),
-// console.log(getWorkSchedule({ start: '01-01-2024', end: '31-03-2024' }, 3, 2)),
+//  => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
+// console.log(getWorkSchedule({ start: '01-01-2024', end: '29-02-2024' }, 2, 2))
+// console.log(getWorkSchedule({ start: '01-01-2024', end: '31-03-2024' }, 3, 2))
 
 /**
  * Determines whether the year in the provided date is a leap year.
