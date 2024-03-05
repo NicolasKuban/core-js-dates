@@ -405,8 +405,13 @@ function getWorkSchedule(period, countWorkDays, countOffDays) {
 //   const year = date.getFullYear();
 //   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 // }
+// function isLeapYear(date) {
+//   return new Date(date.getFullYear(), 2, 0).getDate() > 28;
+// }
 function isLeapYear(date) {
-  return new Date(date.getFullYear(), 2, 0).getDate() > 28;
+  const year = date.getFullYear();
+
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
 
 // console.log(isLeapYear(new Date(2024, 2, 1))) // => true
